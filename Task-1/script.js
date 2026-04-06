@@ -10,13 +10,19 @@ const exportBtn = document.getElementById('exportBtn');
 // Memory (State)
 let userState = JSON.parse(localStorage.getItem('nexusUserState')) || {
     name: null,
-    topic: null
+    topic: null,
+    themeColor: null
 };
 let chatHistory = JSON.parse(localStorage.getItem('nexusChatHistory')) || [];
 
 function saveState() {
     localStorage.setItem('nexusUserState', JSON.stringify(userState));
     localStorage.setItem('nexusChatHistory', JSON.stringify(chatHistory));
+}
+
+// Apply theme on load
+if (userState.themeColor) {
+    document.documentElement.style.setProperty('--primary-color', userState.themeColor);
 }
 
 // Auto-scroll functionality
@@ -96,12 +102,12 @@ const intents = [
             "There are 10 types of people in the world: those who understand binary, and those who don't.",
             "Why did the JavaScript developer wear glasses? Because they couldn't C#!"
         ],
-        chips: [ {label: "Another joke!", text: "tell me a joke"}, {label: "Fun Fact?", text: "fun fact"} ]
+        chips: [ {label: "Another joke!", text: "tell me a joke"}, {label: "Show me a cat", text: "show me a cat"} ]
     },
     {
         name: 'help',
         patterns: [/\b(help|can you do|features|commands)\b/i],
-        responses: ["I can currently handle:<br>- Small talk<br>- Time & Date<br>- Telling jokes & fun facts<br>- Remembering your name!"]
+        responses: ["I can currently handle:<br>- Small talk<br>- Time & Date<br>- Telling jokes & fun facts<br>- Remembering your name<br>- Math calculations<br>- Generating passwords<br>- Flipping a coin / Rolling a dice<br>- Displaying cute cats<br>- Changing themes!"]
     },
     {
         name: 'fact',
@@ -111,7 +117,7 @@ const intents = [
             "The term 'bug' in computing was coined after a real moth was found stuck in a relay.",
             "The first 1GB hard drive weighed over 500 pounds!"
         ],
-        chips: [ {label: "Another fact!", text: "tell me a fact"}, {label: "Math?", text: "calculate 10 + 5"} ]
+        chips: [ {label: "Another fact!", text: "tell me a fact"}, {label: "Flip coin?", text: "flip a coin"} ]
     },
     {
         name: 'math',
@@ -141,9 +147,69 @@ const intents = [
         responses: ["You're very welcome!", "No problem at all!", "Glad I could help!"]
     },
     {
+        name: 'change_theme',
+        patterns: [/\b(change theme to|set theme color to) (red|blue|green|purple|pink|yellow|orange)\b/i],
+        action: (match) => {
+            if (match && match[2]) {
+                const colors = {
+                    'red': '#ef4444',
+                    'blue': '#3b82f6',
+                    'green': '#10b981',
+                    'purple': '#8b5cf6',
+                    'pink': '#ec4899',
+                    'yellow': '#eab308',
+                    'orange': '#f97316'
+                };
+                const colorName = match[2].toLowerCase();
+                const hexColor = colors[colorName];
+                
+                if (hexColor) {
+                    document.documentElement.style.setProperty('--primary-color', hexColor);
+                    userState.themeColor = hexColor;
+                    saveState();
+                    return `Theme color changed to ${colorName}!`;
+                }
+            }
+            return "I couldn't change the theme to that color.";
+        }
+    },
+    {
         name: 'creator',
         patterns: [/\b(who created you|who made you|your creator|who is your creator)\b/i],
         responses: ["I was created by Lokanath Meher during the CodeSoft Internship!"]
+    },
+    {
+        name: 'coin_flip',
+        patterns: [/\b(flip a coin|coin flip|heads or tails)\b/i],
+        action: () => {
+            const result = Math.random() < 0.5 ? 'Heads' : 'Tails';
+            return `I flipped a coin and it landed on <strong>${result}</strong>!`;
+        }
+    },
+    {
+        name: 'dice_roll',
+        patterns: [/\b(roll a dice|dice roll|roll dice)\b/i],
+        action: () => {
+            const result = Math.floor(Math.random() * 6) + 1;
+            return `I rolled a standard 6-sided die and got a <strong>${result}</strong>!`;
+        }
+    },
+    {
+        name: 'password_gen',
+        patterns: [/\b(generate password|password generator|create a password)\b/i],
+        action: () => {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let pwd = "";
+            for(let i=0; i<16; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+            return `Here is a secure 16-character password: <br><br><code style="background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 6px; letter-spacing: 2px; font-family: monospace;">${pwd}</code>`;
+        }
+    },
+    {
+        name: 'random_cat',
+        patterns: [/\b(cat|show me a cat|cute cat|kitty)\b/i],
+        action: () => {
+            return `Meow! Here is a cute cat for you:<br><img src="https://cataas.com/cat?t=${Date.now()}" style="width:100%; max-height:250px; object-fit:cover; border-radius:10px; margin-top:10px; border: 1px solid rgba(255,255,255,0.1);" alt="Cute Cat">`;
+        }
     },
     {
         name: 'matrix_easter_egg',
@@ -281,16 +347,19 @@ document.querySelectorAll('.chip').forEach(chip => {
 });
 
 // Event Listener for Menu Button (Clear Chat)
-document.querySelectorAll('.menu-btn')[1].addEventListener('click', () => {
-    if (confirm("Are you sure you want to clear all chat history and memory?")) {
-        localStorage.removeItem('nexusChatHistory');
-        localStorage.removeItem('nexusUserState');
-        chatHistory = [];
-        userState = { name: null, topic: null };
-        chatBox.innerHTML = '';
-        initChat();
-    }
-});
+const clearBtn = document.getElementById('clearBtn');
+if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+        if (confirm("Are you sure you want to clear all chat history and memory?")) {
+            localStorage.removeItem('nexusChatHistory');
+            localStorage.removeItem('nexusUserState');
+            chatHistory = [];
+            userState = { name: null, topic: null };
+            chatBox.innerHTML = '';
+            initChat();
+        }
+    });
+}
 
 // Download Chat Log Feature
 if (exportBtn) {
