@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Rule-Based Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <header class="chat-header">
+            <div class="bot-profile">
+                <div class="bot-avatar">
+                    <i class="fa-solid fa-robot"></i>
+                    <div class="status-indicator"></div>
+                </div>
+                <div class="bot-info">
+                    <h1>Nexus AI</h1>
+                    <p>Online | Rule-Based System</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="exportBtn" class="menu-btn" title="Download Chat Log">
+                    <i class="fa-solid fa-download"></i>
+                </button>
+                <button class="menu-btn" title="Clear Chat">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Chat History Area -->
+        <main class="chat-box" id="chat-box">
+            <!-- Messages will be injected here dynamically -->
+            <div class="message bot-message intro-animation">
+                <div class="message-content">
+                    <p>Hello! I am Nexus, a rule-based AI assistant. How can I help you today? Try asking me about my name, weather, time, or ask for a joke!</p>
+                </div>
+                <span class="timestamp">Just now</span>
+            </div>
+        </main>
+
+        <!-- Typing Indicator Area -->
+        <div class="typing-indicator-container" id="typingIndicator">
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <p>Nexus is typing...</p>
+        </div>
+
+        <!-- Action Chips (Quick Replies) -->
+        <div class="action-chips" id="action-chips">
+            <button class="chip" data-text="Who are you?">Who are you?</button>
+            <button class="chip" data-text="Tell me a joke">Tell me a joke</button>
+            <button class="chip" data-text="What time is it?">Time?</button>
+            <button class="chip" data-text="Tell me a fact">Fun Fact</button>
+        </div>
+
+        <!-- Input Area -->
+        <footer class="chat-input-area">
+            <button id="micBtn" class="mic-btn" title="Voice Input">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+            <input type="text" id="userInput" placeholder="Type your message here..." autocomplete="off">
+            <button id="sendBtn" class="send-btn" title="Send Message">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
