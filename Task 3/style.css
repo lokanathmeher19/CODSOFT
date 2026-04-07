@@ -176,6 +176,7 @@ header h1 {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     transition: all 0.2s;
 }
@@ -249,11 +250,17 @@ header h1 {
 .status {
     font-size: 0.9rem;
     color: var(--primary);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     font-weight: 500;
+}
+
+#offscreen-canvas {
+    display: none;
 }
 
 .caption-box {
@@ -333,4 +340,95 @@ header h1 {
 .action-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     color: white;
+}
+
+/* --- Added Features: Webcam & Progress Bar --- */
+.action-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.capture-btn {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #10B981;
+}
+
+.capture-btn:hover {
+    background: rgba(16, 185, 129, 0.3);
+}
+
+.webcam-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+    background: var(--bg-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.webcam-container.hidden {
+    display: none;
+}
+
+#webcam-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.webcam-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 20;
+}
+
+.small-btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.95rem;
+    border-radius: 8px;
+}
+
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}
+
+.progress-container.hidden {
+    display: none;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    width: 0%;
+    transition: width 0.2s;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.progress-text.hidden {
+    display: none;
 }

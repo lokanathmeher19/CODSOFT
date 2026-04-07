@@ -17,16 +17,52 @@ const resultArea = document.getElementById('result-area');
 const modelStatus = document.getElementById('model-status');
 const captionText = document.getElementById('caption-text');
 
+// Progress Bar DOM
+const progressContainer = document.getElementById('progress-container');
+const progressBar = document.getElementById('progress-bar');
+const progressText = document.getElementById('progress-text');
+
+// Webcam DOM
+const startWebcamBtn = document.getElementById('start-webcam-btn');
+const webcamContainer = document.getElementById('webcam-container');
+const webcamVideo = document.getElementById('webcam-video');
+const captureBtn = document.getElementById('capture-btn');
+const closeWebcamBtn = document.getElementById('close-webcam-btn');
+const offscreenCanvas = document.getElementById('offscreen-canvas');
+
 let captioner = null;
 let currentImageUrl = null;
+let stream = null; // Webcam stream
 
 // Initialize ML Model
 async function loadModel() {
     try {
-        modelStatus.innerText = 'Loading AI Model (Downloading ~250MB, takes a moment)...';
-        // We use Xenova's quantized vit-gpt2 for fast image captioning
-        captioner = await pipeline('image-to-text', 'Xenova/vit-gpt2-image-captioning');
+        modelStatus.innerText = 'Downloading AI Model parameters (approx 250MB)...';
+        progressContainer.classList.remove('hidden');
+        progressText.classList.remove('hidden');
+        
+        // We use Xenova's BLIP model for high-accuracy image captioning instead of vit-gpt2
+        captioner = await pipeline('image-to-text', 'Xenova/blip-image-captioning-base', {
+            progress_callback: (x) => {
+                // Tracking download progress of model shards
+                if (x.status === 'downloading' && x.total) {
+                    // Quick approximation for a single file loaded out of the total shards
+                    // Since there are multiple files, let's keep track of overall progress.
+                } else if (x.status === 'progress') {
+                    // Loaded ratio
+                    const percent = Math.round((x.loaded / x.total) * 100);
+                    progressBar.style.width = `${percent}%`;
+                    progressText.innerText = `Loading ${x.file}: ${percent}%`;
+                } else if (x.status === 'done') {
+                    // Download complete for a file
+                    progressBar.style.width = `100%`;
+                }
+            }
+        });
+        
         modelStatus.innerText = 'Model Ready! ✨';
+        progressContainer.classList.add('hidden');
+        progressText.classList.add('hidden');
         
         // If an image is already loaded, enable the button
         if (currentImageUrl) {
@@ -35,12 +71,57 @@ async function loadModel() {
     } catch (error) {
         console.error("Error loading model:", error);
         modelStatus.innerText = 'Failed to load AI model. Please check internet connection.';
-        modelStatus.style.color = 'var(--error)';
+        modelStatus.style.color = '#EF4444';
+        progressContainer.classList.add('hidden');
+        progressText.classList.add('hidden');
     }
 }
 
 // Start loading the model in the background immediately
 loadModel();
+
+// Webcam Handlers
+startWebcamBtn.addEventListener('click', async (e) => {
+    e.stopPropagation(); // Prevents it from occasionally firing standard clicks
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        webcamVideo.srcObject = stream;
+        uploadContent.style.display = 'none';
+        webcamContainer.classList.remove('hidden');
+    } catch (err) {
+        console.error("Error accessing webcam:", err);
+        alert("Unable to access the camera. Please ensure you have granted permissions.");
+    }
+});
+
+closeWebcamBtn.addEventListener('click', () => {
+    stopWebcam();
+    webcamContainer.classList.add('hidden');
+    uploadContent.style.display = 'flex';
+});
+
+captureBtn.addEventListener('click', () => {
+    if (!stream) return;
+    
+    const ctx = offscreenCanvas.getContext('2d');
+    offscreenCanvas.width = webcamVideo.videoWidth;
+    offscreenCanvas.height = webcamVideo.videoHeight;
+    ctx.drawImage(webcamVideo, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+    
+    const dataUrl = offscreenCanvas.toDataURL('image/png');
+    
+    stopWebcam();
+    webcamContainer.classList.add('hidden');
+    
+    setImageData(dataUrl);
+});
+
+function stopWebcam() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+}
 
 // Drag & Drop Handlers
 uploadArea.addEventListener('dragover', (e) => {
@@ -74,20 +155,24 @@ function handleFile(file) {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        currentImageUrl = e.target.result;
-        imagePreview.src = currentImageUrl;
-        uploadContent.style.display = 'none';
-        previewContainer.classList.remove('hidden');
-        
-        // Reset result area
-        resultArea.classList.add('hidden');
-        
-        // Enable generate button if model is loaded
-        if (captioner) {
-            generateBtn.disabled = false;
-        }
+        setImageData(e.target.result);
     };
     reader.readAsDataURL(file);
+}
+
+function setImageData(dataUrl) {
+    currentImageUrl = dataUrl;
+    imagePreview.src = currentImageUrl;
+    uploadContent.style.display = 'none';
+    previewContainer.classList.remove('hidden');
+    
+    // Reset result area
+    resultArea.classList.add('hidden');
+    
+    // Enable generate button if model is loaded
+    if (captioner) {
+        generateBtn.disabled = false;
+    }
 }
 
 removeBtn.addEventListener('click', () => {
