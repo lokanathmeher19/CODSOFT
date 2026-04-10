@@ -85,14 +85,57 @@ const intents = [
         responses: ["I'm operating at maximum capacity! Thank you for asking. How are you?"]
     },
     {
+        name: 'datetime_all',
+        patterns: [/\b(perfect date|perfect time|full date|complete date|date and time|time and date|date time|time date|everything about today|tell me all|tell me everything|date time day month)\b/i],
+        action: () => {
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            const day = now.toLocaleDateString(undefined, { weekday: 'long' });
+            const month = now.toLocaleDateString(undefined, { month: 'long' });
+            const dateNum = now.getDate();
+            const year = now.getFullYear();
+            return `Here are the perfect, complete details: The time is <strong>${time}</strong>. Today is <strong>${day}</strong>, <strong>${month} ${dateNum}</strong>, in the year <strong>${year}</strong>.`;
+        }
+    },
+    {
         name: 'time',
         patterns: [/\b(time|clock)\b/i],
-        action: () => `The current local time is ${getCurrentTime()}.`
+        action: () => {
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            return `The current local time is <strong>${time}</strong>.`;
+        }
     },
     {
         name: 'date',
-        patterns: [/\b(date|day)\b/i],
-        action: () => `Today is ${new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`
+        patterns: [/\b(date|today)\b/i],
+        action: () => {
+            const date = new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            return `Today's date is <strong>${date}</strong>.`;
+        }
+    },
+    {
+        name: 'day',
+        patterns: [/\b(day|which day|what day)\b/i],
+        action: () => {
+            const day = new Date().toLocaleDateString(undefined, { weekday: 'long' });
+            return `Today is <strong>${day}</strong>.`;
+        }
+    },
+    {
+        name: 'month',
+        patterns: [/\b(month|which month|what month)\b/i],
+        action: () => {
+            const month = new Date().toLocaleDateString(undefined, { month: 'long' });
+            return `The current month is <strong>${month}</strong>.`;
+        }
+    },
+    {
+        name: 'year',
+        patterns: [/\b(year|which year|what year)\b/i],
+        action: () => {
+            const year = new Date().getFullYear();
+            return `We are in the year <strong>${year}</strong>.`;
+        }
     },
     {
         name: 'joke',

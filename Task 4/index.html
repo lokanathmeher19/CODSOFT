@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamRec | AI Movie Recommendations</title>
+    <meta name="description" content="A perfect AI-driven movie recommendation engine using content-based filtering.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-left">
+            <div class="logo">Stream<span>Rec</span></div>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#discover">Discover</a></li>
+                <li><a href="#my-picks">My Picks</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <button id="pref-btn" class="nav-btn"><i class="fas fa-sliders-h"></i> Preferences</button>
+            <div class="profile-avatar"><i class="fas fa-user"></i></div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero" id="hero">
+        <div class="hero-vignette"></div>
+        <div class="hero-content">
+            <div class="tags"><span class="tag match">98% Match</span> <span class="tag year">2026</span> <span class="tag hd">4K Ultra HD</span></div>
+            <h1 id="hero-title">Cosmic Edge</h1>
+            <p id="hero-desc" class="hero-description">In the distant future, a rogue pilot and a specialized AI navigate the uncharted sectors of the galaxy to stop an impending interstellar war. Experience the ultimate sci-fi adventure.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-play"><i class="fas fa-play"></i> Watch Now</button>
+                <button class="btn btn-info"><i class="fas fa-info-circle"></i> More Info</button>
+            </div>
+            <div class="hero-genres" id="hero-genres">
+                Sci-Fi • Action • Adventure
+            </div>
+        </div>
+    </div>
+
+    <!-- Preferences Modal -->
+    <div id="pref-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-modal"><i class="fas fa-times"></i></button>
+            <h2>Set Your Preferences</h2>
+            <p>Select your favorite genres to calibrate our AI recommendation engine.</p>
+            <div class="genre-grid" id="genre-grid">
+                <!-- Genres injected here -->
+            </div>
+            <button id="save-pref-btn" class="btn btn-primary btn-full">Generate Recommendations</button>
+        </div>
+    </div>
+
+    <!-- Movie Details Modal -->
+    <div id="movie-modal" class="modal">
+        <div class="modal-content movie-modal-content">
+            <button class="close-btn" id="close-movie-modal"><i class="fas fa-times"></i></button>
+            <div class="movie-modal-banner" id="modal-banner"></div>
+            <div class="movie-modal-info">
+                <h2 id="modal-title">Movie Title</h2>
+                <div class="modal-meta">
+                    <span id="modal-match" class="match-score">95% Match</span>
+                    <span id="modal-year">2024</span>
+                </div>
+                <p id="modal-desc" class="modal-desc">Description goes here...</p>
+                <div class="modal-tags">
+                    <strong>Genres:</strong> <span id="modal-genres">Action, Sci-Fi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Personalized Recommendations -->
+        <section class="row-section" id="my-picks" style="display: none;">
+            <h2 class="row-title">Top Matches For You <span class="badge">AI Curated</span></h2>
+            <div class="slider-container">
+                <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                <div class="row-content" id="rec-row">
+                    <!-- Recommended Movies go here -->
+                </div>
+                <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <!-- Trending Section -->
+        <section class="row-section" id="discover">
+            <h2 class="row-title">Trending Now</h2>
+            <div class="slider-container">
+                <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                <div class="row-content" id="trending-row">
+                    <!-- Trending Movies go here -->
+                </div>
+                <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <!-- Sci-Fi Classics -->
+        <section class="row-section">
+            <h2 class="row-title">Sci-Fi Masterpieces</h2>
+            <div class="slider-container">
+                <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                <div class="row-content" id="scifi-row">
+                    <!-- Sci-Fi Movies go here -->
+                </div>
+                <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>StreamRec Recommendation Engine | Created for Task 4 of CodeSoft Internship</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
